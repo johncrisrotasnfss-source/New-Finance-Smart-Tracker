@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Family Smart Finance System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<h1>🌌 Family Smart Finance System</h1>
+<p class="subtitle">
+A flexible budgeting platform for students, parents, and anyone who wants smarter financial control.
+</p>
+
+<div class="folder-nav">
+    <button onclick="openFolder('dashboard')">Dashboard</button>
+    <button onclick="openFolder('transactions')">Transactions</button>
+    <button onclick="openFolder('budget')">Budget</button>
+    <button onclick="openFolder('about')">About</button>
+    <button onclick="openFolder('contact')">Contact</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="folder active">
+
+    <div class="card">
+        <h3>Total Income</h3>
+        ₱ <span id="income">0</span>
+    </div>
+
+    <div class="card">
+        <h3>Total Expenses</h3>
+        ₱ <span id="expense">0</span>
+    </div>
+
+    <div class="card">
+        <h3>Balance</h3>
+        ₱ <span id="balance">0</span>
+    </div>
+
+    <div class="card">
+        <h3>AI Insight</h3>
+        <div id="aiAnalysis"></div>
+    </div>
+
+    <div class="card">
+        <h3>Expense by Category</h3>
+        <canvas id="categoryChart"></canvas>
+    </div>
+
+</div>
+
+<!-- TRANSACTIONS -->
+<div id="transactions" class="folder">
+    <div class="card">
+        <h3>Add Transaction</h3>
+
+        <input type="number" id="amount" placeholder="Enter Amount">
+
+        <select id="type">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+        </select>
+
+        <select id="category">
+            <option value="allowance">Allowance</option>
+            <option value="salary">Salary</option>
+            <option value="scholarship">Scholarship</option>
+            <option value="food">Food</option>
+            <option value="transport">Transport</option>
+            <option value="school">School Supplies</option>
+            <option value="tuition">Tuition</option>
+            <option value="rent">Rent</option>
+            <option value="internet">Internet</option>
+            <option value="utilities">Utilities</option>
+            <option value="entertainment">Entertainment</option>
+        </select>
+
+        <button onclick="addTransaction()">Add</button>
+        <button class="Reset" onclick="resetAll()">Reset</button>
+    </div>
+</div>
+
+<!-- BUDGET -->
+<div id="budget" class="folder">
+    <div class="card">
+        <h3>Monthly Budget</h3>
+
+        <input type="number" id="budgetInput" placeholder="Enter Monthly Budget">
+        <button onclick="setBudget()">Save Budget</button>
+
+        <p>Budget: ₱ <span id="budgetDisplay">0</span></p>
+        <p>Remaining: ₱ <span id="budgetRemaining">0</span></p>
+    </div>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="folder">
+    <div class="card">
+        <h3>About Us</h3>
+        <p>
+            Family Smart Finance System is designed for anyone —
+            whether you are a student managing allowance,
+            a parent monitoring household expenses,
+            or simply someone who wants better financial control.
+        </p>
+
+        <h4>Group 2 Members</h4>
+        <ul>
+            <li>John Cris Hernan Rota</li>
+            <li>Rhianne Denise Caringal</li>
+            <li>Bianca Elise Betonio</li>
+            <li>Joceff Ebrahim Caponpon</li>
+        </ul>
+    </div>
+</div>
+
+<!-- CONTACT -->
+<div id="contact" class="folder">
+    <div class="card">
+        <h3>Contact Us</h3>
+        <p>Email: johncrishernan.snfss@email.com</p>
+        <p>Phone: 0912-458-1727</p>
+        <p>
+            We welcome suggestions and feedback to improve
+            our Family Smart Finance System.
+        </p>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
