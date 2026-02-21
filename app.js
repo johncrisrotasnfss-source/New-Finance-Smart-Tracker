@@ -24,6 +24,36 @@ function addTransaction() {
     updateUI();
 }
 
+// ===== RESET =====
+function resetAll() {
+    if (!confirm("Are you sure you want to reset all data?")) return;
+
+    // Clear storage
+    localStorage.removeItem("transactions");
+    localStorage.removeItem("budget");
+
+    // Reset displayed numbers
+    document.getElementById("income").innerText = "0";
+    document.getElementById("expense").innerText = "0";
+    document.getElementById("balance").innerText = "0";
+    document.getElementById("aiAnalysis").innerText = "";
+
+    document.getElementById("budgetDisplay").innerText = "0";
+    document.getElementById("budgetRemaining").innerText = "0";
+
+    // Clear inputs
+    document.getElementById("amount").value = "";
+    document.getElementById("budgetInput").value = "";
+
+    // Reset charts if chart exists
+    if (window.categoryChart) {
+        window.categoryChart.destroy();
+    }
+
+    // Reload page to ensure full reset
+    location.reload();
+}
+
 // ===== UPDATE UI =====
 function updateUI() {
     let income = 0;
