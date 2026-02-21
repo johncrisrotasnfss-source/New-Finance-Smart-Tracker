@@ -20,7 +20,7 @@ function addTransaction() {
 
     transactions.push({ amount, type, category });
     localStorage.setItem("transactions", JSON.stringify(transactions));
-
+generateAIInsight();
     updateUI();
 }
 
@@ -163,22 +163,32 @@ function updateChart() {
 }
 
 // ===== SIMPLE AI ANALYSIS =====
-function runAIAnalysis(income, expense) {
-    const aiBox = document.getElementById("aiAnalysis");
+function generateAIInsight() {
+    let income = parseFloat(document.getElementById("income").innerText) || 0;
+    let expense = parseFloat(document.getElementById("expense").innerText) || 0;
+    let budget = parseFloat(document.getElementById("budgetDisplay").innerText) || 0;
 
-    if (income === 0) {
-        aiBox.innerText = "Start adding income to analyze your spending.";
-        return;
+    let balance = income - expense;
+    let insight = "";
+
+    // Spending risk analysis
+    if (expense > income) {
+        insight = "⚠️ Warning: Your expenses are higher than your income. Consider reducing non-essential spending.";
+    }
+    else if (expense > income * 0.7) {
+        insight = "📊 High spending detected. You are using more than 70% of your income.";
+    }
+    else if (balance > budget) {
+        insight = "🌟 Excellent! Your balance is above your budget limit.";
+    }
+    else if (balance < 0) {
+        insight = "🔴 Your account is in deficit. Try to increase income or reduce expenses.";
+    }
+    else {
+        insight = "💡 Your finances are stable. Maintain your current financial habits.";
     }
 
-    const percent = (expense / income) * 100;
-
-    if (percent > 90)
-        aiBox.innerText = "⚠ You are spending almost all your income.";
-    else if (percent > 70)
-        aiBox.innerText = "⚡ Spending is high. Consider reducing expenses.";
-    else
-        aiBox.innerText = "✅ Good financial balance. Keep it up!";
+    document.getElementById("aiAnalysis").innerText = insight;
 }
 
 // ===== STARS BACKGROUND =====
