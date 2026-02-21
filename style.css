@@ -1,0 +1,86 @@
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+
+body{
+background:radial-gradient(circle at top,#1a0f2e,#0a0615 70%);
+color:white;
+overflow-x:hidden;
+}
+
+h1{
+text-align:center;
+margin-top:30px;
+color:#c084fc;
+}
+
+.subtitle{
+text-align:center;
+margin:10px auto 25px auto;
+width:80%;
+color:#d8b4fe;
+font-size:14px;
+}
+
+.folder-nav{
+text-align:center;
+margin-bottom:25px;
+}
+
+.folder-nav button{
+background:linear-gradient(135deg,#6b21a8,#9333ea);
+border:none;
+padding:10px 18px;
+margin:5px;
+border-radius:8px;
+color:white;
+cursor:pointer;
+}
+
+.folder{
+display:none;
+width:90%;
+max-width:1000px;
+margin:auto;
+}
+
+.folder.active{
+display:block;
+}
+
+.card{
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(10px);
+border-radius:15px;
+padding:20px;
+margin-bottom:20px;
+}
+
+input,select{
+width:100%;
+padding:8px;
+margin:8px 0;
+border-radius:6px;
+border:none;
+}
+
+button{
+padding:8px 15px;
+border-radius:6px;
+border:none;
+cursor:pointer;
+background:#7e22ce;
+color:white;
+}
+
+button:hover{
+background:#a855f7;
+}
+
+#categoryChart{
+width:100% !important;
+height:300px !important;
+}
