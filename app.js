@@ -196,3 +196,65 @@ window.addEventListener("load", () => {
 window.addEventListener("DOMContentLoaded", () => {
     renderChart();
 });
+
+// ===============================
+// Optimized Star Particle Engine
+// ===============================
+
+const starCanvas = document.getElementById("stars");
+
+if (starCanvas) {
+
+    const ctx = starCanvas.getContext("2d");
+
+    let stars = [];
+    const STAR_COUNT = 70; // lower = smoother
+
+    function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        starCanvas.width = window.innerWidth * dpr;
+        starCanvas.height = window.innerHeight * dpr;
+        starCanvas.style.width = window.innerWidth + "px";
+        starCanvas.style.height = window.innerHeight + "px";
+        ctx.scale(dpr, dpr);
+    }
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    function createStars() {
+        stars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+            stars.push({
+                x: Math.random() * window.innerWidth,
+                y: Math.random() * window.innerHeight,
+                radius: Math.random() * 1.2,
+                speed: Math.random() * 0.3 + 0.1
+            });
+        }
+    }
+
+    createStars();
+
+    function animate() {
+        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+
+        for (let star of stars) {
+            star.y += star.speed;
+
+            if (star.y > window.innerHeight) {
+                star.y = 0;
+                star.x = Math.random() * window.innerWidth;
+            }
+
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+            ctx.fillStyle = "white";
+            ctx.fill();
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
+}
