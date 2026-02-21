@@ -1,222 +1,175 @@
+// ===============================
+// DATA STORAGE
+// ===============================
+
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 let budget = parseFloat(localStorage.getItem("budget")) || 0;
-
-let chart;
-
-/* Folder Navigation */
-function openFolder(id){
-document.querySelectorAll(".folder").forEach(f=>{
-f.classList.remove("active");
-});
-
-document.getElementById(id).classList.add("active");
-renderChart();
-updateUI();
-}
-
-/* Add Transaction */
-function addTransaction(){
-
-const amount=parseFloat(document.getElementById("amount").value);
-const type=document.getElementById("type").value;
-const category=document.getElementById("category").value;
-
-if(!amount||amount<=0){
-alert("Enter valid amount");
-return;
-}
-
-transactions.push({amount,type,category});
-
-localStorage.setItem("transactions",JSON.stringify(transactions));
-
-document.getElementById("amount").value="";
-
-renderChart();
-updateUI();
-}
-
-/* Reset System */
-function resetAll(){
-
-if(!confirm("Reset all data?")) return;
-
-localStorage.clear();
-
-transactions=[];
-budget=0;
-
-renderChart();
-updateUI();
-}
-
-
-/* UI Engine */
-function updateUI(){
-
-let income=0;
-let expense=0;
-
-transactions.forEach(t=>{
-if(t.type==="income") income+=t.amount;
-else expense+=t.amount;
-});
-
-document.getElementById("income").innerText=income.toFixed(2);
-document.getElementById("expense").innerText=expense.toFixed(2);
-document.getElementById("balance").innerText=(income-expense).toFixed(2);
-
-updateBudget(expense);
-renderChart();
-}
-
-/* Budget */
-
-function setBudget(){
-
-budget=parseFloat(document.getElementById("budgetInput").value)||0;
-
-localStorage.setItem("budget",budget);
-
-updateBudget(getTotalExpense());
-}
-
-function getTotalExpense(){
-
-return transactions
-.filter(t=>t.type==="expense")
-.reduce((s,t)=>s+t.amount,0);
-
-}
-
-function updateBudget(expense){
-
-document.getElementById("budgetDisplay").innerText=budget.toFixed(2);
-document.getElementById("budgetRemaining").innerText=(budget-expense).toFixed(2);
-
-renderChart();
-updateUI();
-}
-   
+let financeChart;
 
 // ===============================
-// Professional Chart Rendering Engine
+// INITIALIZE SYSTEM
 // ===============================
 
-let chartInstance = null;
+document.addEventListener("DOMContentLoaded", () => {
+    initializeChart();
+    updateUI();
+    startStarBackground();
+});
 
-function renderChart() {
+// ===============================
+// NAVIGATION
+// ===============================
 
-    const dashboard = document.getElementById("dashboard");
-
-    if (!dashboard || !dashboard.classList.contains("active")) return;
-
-    const canvas = document.getElementById("categoryChart");
-
-    if (!canvas) return;
-
-    const ctx = canvas.getContext("2d");
-
-    // Build category aggregation
-    const categoryMap = {};
-
-    transactions.forEach(t => {
-        if (t.type === "expense") {
-            categoryMap[t.category] =
-                (categoryMap[t.category] || 0) + t.amount;
-        }
+function openFolder(id) {
+    document.querySelectorAll(".folder").forEach(f => {
+        f.classList.remove("active");
     });
 
-    const labels = Object.keys(categoryMap);
-    const values = Object.values(categoryMap);
+    document.getElementById(id).classList.add("active");
 
-    if (chartInstance) {
-        chartInstance.destroy();
+    if (id === "dashboard" && financeChart) {
+        setTimeout(() => financeChart.resize(), 150);
     }
+}
 
-    if (labels.length === 0) {
-        chartInstance = new Chart(ctx, {
-            type: "pie",
-            data: {
-                labels: ["No Data"],
-                datasets: [{
-                    data: [1]
-                }]
-            },
-            options: {
-                responsive: true
-            }
-        });
+// ===============================
+// ADD TRANSACTION
+// ===============================
 
+function addTransaction() {
+
+    const amount = parseFloat(document.getElementById("amount").value);
+    const type = document.getElementById("type").value;
+    const category = document.getElementById("category").value;
+
+    if (!amount || amount <= 0) {
+        alert("Enter a valid amount.");
         return;
     }
 
-    chartInstance = new Chart(ctx, {
-        type: "pie",
+    transactions.push({ amount, type, category });
+
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+
+    document.getElementById("amount").value = "";
+
+    updateUI();
+}
+
+// ===============================
+// RESET SYSTEM
+// ===============================
+
+function resetAll() {
+
+    if (!confirm("Reset all data?")) return;
+
+    localStorage.removeItem("transactions");
+    localStorage.removeItem("budget");
+
+    transactions = [];
+    budget = 0;
+
+    updateUI();
+}
+
+// ===============================
+// UI ENGINE
+// ===============================
+
+function updateUI() {
+
+    let income = 0;
+    let expense = 0;
+
+    transactions.forEach(t => {
+        if (t.type === "income") income += t.amount;
+        else expense += t.amount;
+    });
+
+    document.getElementById("income").innerText = income.toFixed(2);
+    document.getElementById("expense").innerText = expense.toFixed(2);
+    document.getElementById("balance").innerText = (income - expense).toFixed(2);
+
+    updateBudgetDisplay(expense);
+    updateChart(income, expense);
+}
+
+// ===============================
+// BUDGET
+// ===============================
+
+function setBudget() {
+
+    budget = parseFloat(document.getElementById("budgetInput").value) || 0;
+    localStorage.setItem("budget", budget);
+
+    updateUI();
+}
+
+function updateBudgetDisplay(expense) {
+
+    document.getElementById("budgetDisplay").innerText = budget.toFixed(2);
+    document.getElementById("budgetRemaining").innerText = (budget - expense).toFixed(2);
+}
+
+// ===============================
+// CHART ENGINE
+// ===============================
+
+function initializeChart() {
+
+    const ctx = document.getElementById("financeChart").getContext("2d");
+
+    financeChart = new Chart(ctx, {
+        type: "doughnut",
         data: {
-            labels: labels,
+            labels: ["Income", "Expenses"],
             datasets: [{
-                data: values
+                data: [0, 0],
+                backgroundColor: ["#6C63FF", "#FF6584"],
+                borderWidth: 2
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "white"
+                    }
+                }
+            }
         }
     });
 }
-/* Init */
-window.addEventListener("DOMContentLoaded",()=>{
-updateUI();
-});
 
-function safeAutoRefresh() {
+function updateChart(income, expense) {
 
-    const refreshKey = "finance_last_refresh";
+    if (!financeChart) return;
 
-    const lastRefresh = localStorage.getItem(refreshKey);
-    const now = Date.now();
-
-    // Refresh only if 5 seconds passed since last refresh
-    if (!lastRefresh || now - parseInt(lastRefresh) > 5000) {
-
-        localStorage.setItem(refreshKey, now);
-
-        setTimeout(() => {
-            updateUI();
-        }, 300);
-    }
+    financeChart.data.datasets[0].data = [income, expense];
+    financeChart.update();
 }
 
-// Run once when page loads
-window.addEventListener("load", () => {
-    safeAutoRefresh();
-});
-
-window.addEventListener("DOMContentLoaded", () => {
-    renderChart();
-});
-
 // ===============================
-// Optimized Star Particle Engine
+// STAR BACKGROUND
 // ===============================
 
-const starCanvas = document.getElementById("stars");
+function startStarBackground() {
 
-if (starCanvas) {
+    const starCanvas = document.getElementById("stars");
+    if (!starCanvas) return;
 
     const ctx = starCanvas.getContext("2d");
 
     let stars = [];
-    const STAR_COUNT = 70; // lower = smoother
+    const STAR_COUNT = 60;
 
     function resizeCanvas() {
-        const dpr = window.devicePixelRatio || 1;
-        starCanvas.width = window.innerWidth * dpr;
-        starCanvas.height = window.innerHeight * dpr;
-        starCanvas.style.width = window.innerWidth + "px";
-        starCanvas.style.height = window.innerHeight + "px";
-        ctx.scale(dpr, dpr);
+        starCanvas.width = window.innerWidth;
+        starCanvas.height = window.innerHeight;
     }
 
     resizeCanvas();
@@ -226,9 +179,9 @@ if (starCanvas) {
         stars = [];
         for (let i = 0; i < STAR_COUNT; i++) {
             stars.push({
-                x: Math.random() * window.innerWidth,
-                y: Math.random() * window.innerHeight,
-                radius: Math.random() * 1.2,
+                x: Math.random() * starCanvas.width,
+                y: Math.random() * starCanvas.height,
+                radius: Math.random() * 1.5,
                 speed: Math.random() * 0.3 + 0.1
             });
         }
@@ -237,24 +190,23 @@ if (starCanvas) {
     createStars();
 
     function animate() {
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+        ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
 
-        for (let star of stars) {
+        stars.forEach(star => {
             star.y += star.speed;
-
-            if (star.y > window.innerHeight) {
+            if (star.y > starCanvas.height) {
                 star.y = 0;
-                star.x = Math.random() * window.innerWidth;
+                star.x = Math.random() * starCanvas.width;
             }
 
             ctx.beginPath();
             ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
             ctx.fillStyle = "white";
             ctx.fill();
-        }
+        });
 
         requestAnimationFrame(animate);
     }
 
-    requestAnimationFrame(animate);
+    animate();
 }
