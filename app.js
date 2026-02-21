@@ -1,9 +1,11 @@
+
 // ===============================
 // DATA STORAGE
 // ===============================
 
 let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 let budget = parseFloat(localStorage.getItem("budget")) || 0;
+
 let financeChart;
 
 // ===============================
@@ -11,47 +13,54 @@ let financeChart;
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
+
     initializeChart();
     updateUI();
     startStarBackground();
+
 });
 
 // ===============================
 // NAVIGATION
 // ===============================
 
-function openFolder(id) {
-    document.querySelectorAll(".folder").forEach(f => {
+function openFolder(id){
+
+    document.querySelectorAll(".folder").forEach(f=>{
         f.classList.remove("active");
     });
 
     document.getElementById(id).classList.add("active");
 
-    if (id === "dashboard" && financeChart) {
-        setTimeout(() => financeChart.resize(), 150);
+    if(id === "dashboard" && financeChart){
+        setTimeout(()=>financeChart.resize(),150);
     }
 }
 
 // ===============================
-// ADD TRANSACTION
+// TRANSACTION ENGINE
 // ===============================
 
-function addTransaction() {
+function addTransaction(){
 
     const amount = parseFloat(document.getElementById("amount").value);
     const type = document.getElementById("type").value;
     const category = document.getElementById("category").value;
 
-    if (!amount || amount <= 0) {
+    if(!amount || amount <= 0){
         alert("Enter a valid amount.");
         return;
     }
 
-    transactions.push({ amount, type, category });
+    transactions.push({
+        amount,
+        type,
+        category
+    });
 
-    localStorage.setItem("transactions", JSON.stringify(transactions));
+    localStorage.setItem("transactions",JSON.stringify(transactions));
 
-    document.getElementById("amount").value = "";
+    document.getElementById("amount").value="";
 
     updateUI();
 }
@@ -60,15 +69,15 @@ function addTransaction() {
 // RESET SYSTEM
 // ===============================
 
-function resetAll() {
+function resetAll(){
 
-    if (!confirm("Reset all data?")) return;
+    if(!confirm("Reset all data?")) return;
 
     localStorage.removeItem("transactions");
     localStorage.removeItem("budget");
 
-    transactions = [];
-    budget = 0;
+    transactions=[];
+    budget=0;
 
     updateUI();
 }
@@ -77,67 +86,68 @@ function resetAll() {
 // UI ENGINE
 // ===============================
 
-function updateUI() {
+function updateUI(){
 
-    let income = 0;
-    let expense = 0;
+    let income=0;
+    let expense=0;
 
-    transactions.forEach(t => {
-        if (t.type === "income") income += t.amount;
-        else expense += t.amount;
+    transactions.forEach(t=>{
+        if(t.type==="income") income+=t.amount;
+        else expense+=t.amount;
     });
 
-    document.getElementById("income").innerText = income.toFixed(2);
-    document.getElementById("expense").innerText = expense.toFixed(2);
-    document.getElementById("balance").innerText = (income - expense).toFixed(2);
+    document.getElementById("income").innerText=income.toFixed(2);
+    document.getElementById("expense").innerText=expense.toFixed(2);
+    document.getElementById("balance").innerText=(income-expense).toFixed(2);
 
     updateBudgetDisplay(expense);
-    updateChart(income, expense);
+    updateChart(income,expense);
 }
 
 // ===============================
-// BUDGET
+// BUDGET ENGINE
 // ===============================
 
-function setBudget() {
+function setBudget(){
 
-    budget = parseFloat(document.getElementById("budgetInput").value) || 0;
-    localStorage.setItem("budget", budget);
+    budget = parseFloat(document.getElementById("budgetInput").value)||0;
+
+    localStorage.setItem("budget",budget);
 
     updateUI();
 }
 
-function updateBudgetDisplay(expense) {
+function updateBudgetDisplay(expense){
 
-    document.getElementById("budgetDisplay").innerText = budget.toFixed(2);
-    document.getElementById("budgetRemaining").innerText = (budget - expense).toFixed(2);
+    document.getElementById("budgetDisplay").innerText=budget.toFixed(2);
+    document.getElementById("budgetRemaining").innerText=(budget-expense).toFixed(2);
 }
 
 // ===============================
 // CHART ENGINE
 // ===============================
 
-function initializeChart() {
+function initializeChart(){
 
     const ctx = document.getElementById("financeChart").getContext("2d");
 
-    financeChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            labels: ["Income", "Expenses"],
-            datasets: [{
-                data: [0, 0],
-                backgroundColor: ["#6C63FF", "#FF6584"],
-                borderWidth: 2
+    financeChart = new Chart(ctx,{
+        type:"doughnut",
+        data:{
+            labels:["Income","Expenses"],
+            datasets:[{
+                data:[0,0],
+                backgroundColor:["#6C63FF","#FF6584"],
+                borderWidth:2
             }]
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: "white"
+        options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            plugins:{
+                legend:{
+                    labels:{
+                        color:"white"
                     }
                 }
             }
@@ -145,64 +155,73 @@ function initializeChart() {
     });
 }
 
-function updateChart(income, expense) {
+function updateChart(income,expense){
 
-    if (!financeChart) return;
+    if(!financeChart) return;
 
-    financeChart.data.datasets[0].data = [income, expense];
-    financeChart.update();
+    financeChart.data.datasets[0].data=[income,expense];
+
+    financeChart.update("none");
 }
 
 // ===============================
-// STAR BACKGROUND
+// STAR BACKGROUND ENGINE
 // ===============================
 
-function startStarBackground() {
+function startStarBackground(){
 
     const starCanvas = document.getElementById("stars");
-    if (!starCanvas) return;
+    if(!starCanvas) return;
 
     const ctx = starCanvas.getContext("2d");
 
-    let stars = [];
-    const STAR_COUNT = 60;
+    let stars=[];
+    const STAR_COUNT=60;
 
-    function resizeCanvas() {
-        starCanvas.width = window.innerWidth;
-        starCanvas.height = window.innerHeight;
+    function resizeCanvas(){
+        starCanvas.width=window.innerWidth;
+        starCanvas.height=window.innerHeight;
     }
 
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize",resizeCanvas);
 
-    function createStars() {
-        stars = [];
-        for (let i = 0; i < STAR_COUNT; i++) {
+    function createStars(){
+
+        stars=[];
+
+        for(let i=0;i<STAR_COUNT;i++){
+
             stars.push({
-                x: Math.random() * starCanvas.width,
-                y: Math.random() * starCanvas.height,
-                radius: Math.random() * 1.5,
-                speed: Math.random() * 0.3 + 0.1
+                x:Math.random()*starCanvas.width,
+                y:Math.random()*starCanvas.height,
+                radius:Math.random()*1.5,
+                speed:Math.random()*0.3+0.1
             });
+
         }
     }
 
     createStars();
 
-    function animate() {
-        ctx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+    function animate(){
 
-        stars.forEach(star => {
-            star.y += star.speed;
-            if (star.y > starCanvas.height) {
-                star.y = 0;
-                star.x = Math.random() * starCanvas.width;
+        ctx.clearRect(0,0,starCanvas.width,starCanvas.height);
+
+        stars.forEach(star=>{
+
+            star.y+=star.speed;
+
+            if(star.y>starCanvas.height){
+                star.y=0;
+                star.x=Math.random()*starCanvas.width;
             }
 
             ctx.beginPath();
-            ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-            ctx.fillStyle = "white";
+            ctx.arc(star.x,star.y,star.radius,0,Math.PI*2);
+            ctx.fillStyle="white";
             ctx.fill();
+
         });
 
         requestAnimationFrame(animate);
