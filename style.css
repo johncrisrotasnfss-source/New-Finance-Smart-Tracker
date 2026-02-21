@@ -203,3 +203,13 @@ padding:18px;
 }
 
 }
+
+select{
+background:rgba(255,255,255,0.1);
+color:white;
+}
+
+select option{
+background:#1a0f2e;
+color:white;
+}
