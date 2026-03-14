@@ -1,4 +1,3 @@
-
 // ===============================
 // DATA STORAGE
 // ===============================
@@ -14,55 +13,35 @@ let financeChart;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    initializeChart();
-    updateUI();
-    startStarBackground();
+initializeChart();
+updateUI();
+startStarBackground();
 
 });
 
 // ===============================
-// NAVIGATION
-// ===============================
-
-function openFolder(id){
-
-    document.querySelectorAll(".folder").forEach(f=>{
-        f.classList.remove("active");
-    });
-
-    document.getElementById(id).classList.add("active");
-
-    if(id === "dashboard" && financeChart){
-        setTimeout(()=>financeChart.resize(),150);
-    }
-}
-
-// ===============================
-// TRANSACTION ENGINE
+// ADD TRANSACTION
 // ===============================
 
 function addTransaction(){
 
-    const amount = parseFloat(document.getElementById("amount").value);
-    const type = document.getElementById("type").value;
-    const category = document.getElementById("category").value;
+const amount = parseFloat(document.getElementById("amount").value);
+const type = document.getElementById("type").value;
+const category = document.getElementById("category").value;
 
-    if(!amount || amount <= 0){
-        alert("Enter a valid amount.");
-        return;
-    }
+if(!amount || amount <= 0){
+alert("Enter valid amount");
+return;
+}
 
-    transactions.push({
-        amount,
-        type,
-        category
-    });
+transactions.push({amount,type,category});
 
-    localStorage.setItem("transactions",JSON.stringify(transactions));
+localStorage.setItem("transactions",JSON.stringify(transactions));
 
-    document.getElementById("amount").value="";
+document.getElementById("amount").value="";
 
-    updateUI();
+updateUI();
+
 }
 
 // ===============================
@@ -71,15 +50,16 @@ function addTransaction(){
 
 function resetAll(){
 
-    if(!confirm("Reset all data?")) return;
+if(!confirm("Reset all data?")) return;
 
-    localStorage.removeItem("transactions");
-    localStorage.removeItem("budget");
+localStorage.removeItem("transactions");
+localStorage.removeItem("budget");
 
-    transactions=[];
-    budget=0;
+transactions=[];
+budget=0;
 
-    updateUI();
+updateUI();
+
 }
 
 // ===============================
@@ -88,144 +68,300 @@ function resetAll(){
 
 function updateUI(){
 
-    let income=0;
-    let expense=0;
+let income=0;
+let expense=0;
 
-    transactions.forEach(t=>{
-        if(t.type==="income") income+=t.amount;
-        else expense+=t.amount;
-    });
+transactions.forEach(t=>{
+if(t.type==="income") income+=t.amount;
+else expense+=t.amount;
+});
 
-    document.getElementById("income").innerText=income.toFixed(2);
-    document.getElementById("expense").innerText=expense.toFixed(2);
-    document.getElementById("balance").innerText=(income-expense).toFixed(2);
+document.getElementById("income").innerText=income.toFixed(2);
+document.getElementById("expense").innerText=expense.toFixed(2);
+document.getElementById("balance").innerText=(income-expense).toFixed(2);
 
-    updateBudgetDisplay(expense);
-    updateChart(income,expense);
+// Budget
+updateBudgetDisplay(expense);
+
+// Chart
+updateChart(income,expense);
+
+// Smart Intelligence
+updateIntelligence(income,expense);
+
 }
 
 // ===============================
-// BUDGET ENGINE
+// BUDGET SYSTEM
 // ===============================
 
 function setBudget(){
 
-    budget = parseFloat(document.getElementById("budgetInput").value)||0;
+budget=parseFloat(document.getElementById("budgetInput").value)||0;
 
-    localStorage.setItem("budget",budget);
+localStorage.setItem("budget",budget);
 
-    updateUI();
+updateUI();
+
 }
 
 function updateBudgetDisplay(expense){
 
-    document.getElementById("budgetDisplay").innerText=budget.toFixed(2);
-    document.getElementById("budgetRemaining").innerText=(budget-expense).toFixed(2);
+document.getElementById("budgetDisplay").innerText=budget.toFixed(2);
+document.getElementById("budgetRemaining").innerText=(budget-expense).toFixed(2);
+
 }
 
 // ===============================
-// CHART ENGINE
+// CHART SYSTEM
 // ===============================
 
 function initializeChart(){
 
-    const ctx = document.getElementById("financeChart").getContext("2d");
+const ctx=document.getElementById("financeChart").getContext("2d");
 
-    financeChart = new Chart(ctx,{
-        type:"doughnut",
-        data:{
-            labels:["Income","Expenses"],
-            datasets:[{
-                data:[0,0],
-                backgroundColor:["#6C63FF","#FF6584"],
-                borderWidth:2
-            }]
-        },
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            plugins:{
-                legend:{
-                    labels:{
-                        color:"white"
-                    }
-                }
-            }
-        }
-    });
+financeChart=new Chart(ctx,{
+type:"doughnut",
+data:{
+labels:["Income","Expenses"],
+datasets:[{
+data:[0,0],
+backgroundColor:["#6C63FF","#FF6584"],
+borderWidth:2
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+plugins:{
+legend:{
+labels:{color:"white"}
+}
+}
+}
+});
+
 }
 
 function updateChart(income,expense){
 
-    if(!financeChart) return;
+if(!financeChart) return;
 
-    financeChart.data.datasets[0].data=[income,expense];
+financeChart.data.datasets[0].data=[income,expense];
 
-    financeChart.update("none");
+financeChart.update("none");
+
 }
 
 // ===============================
-// STAR BACKGROUND ENGINE
+// FINANCIAL HEALTH ENGINE
+// ===============================
+
+function calculateFinancialHealth(income,expense,budget){
+
+if(income===0) return 0;
+
+let expenseRatio=expense/income;
+let budgetPressure=budget>0 ? expense/budget : 0;
+
+let score=
+(1-expenseRatio)*60+
+(1-budgetPressure)*40;
+
+score=Math.round(score);
+
+score=Math.max(0,Math.min(100,score));
+
+return score;
+
+}
+
+// ===============================
+// SPENDING PATTERN ANALYZER
+// ===============================
+
+function analyzeSpendingPattern(){
+
+let categories={};
+
+transactions.forEach(t=>{
+
+if(t.type==="expense"){
+
+categories[t.category]=(categories[t.category]||0)+t.amount;
+
+}
+
+});
+
+let maxCategory="None";
+let maxValue=0;
+
+for(let cat in categories){
+
+if(categories[cat]>maxValue){
+
+maxValue=categories[cat];
+maxCategory=cat;
+
+}
+
+}
+
+return maxCategory;
+
+}
+
+// ===============================
+// EXPENSE PREDICTION ENGINE
+// ===============================
+
+function predictNextExpense(){
+
+let expenses=transactions
+.filter(t=>t.type==="expense")
+.map(t=>t.amount);
+
+if(expenses.length<3) return 0;
+
+let avg=expenses.reduce((a,b)=>a+b,0)/expenses.length;
+
+return (avg*1.1).toFixed(2);
+
+}
+
+// ===============================
+// SMART FINANCIAL ADVISOR
+// ===============================
+
+function generateAdvice(income,expense,budget){
+
+let messages=[];
+
+if(income===0){
+messages.push("Add income to begin financial analysis.");
+return messages;
+}
+
+let ratio=expense/income;
+
+if(ratio>0.9)
+messages.push("⚠ You are spending almost all your income.");
+
+if(ratio>0.7 && ratio<=0.9)
+messages.push("⚡ Spending is high. Consider reducing wants.");
+
+if(ratio<0.5)
+messages.push("✅ Good saving habit detected.");
+
+if(budget>0 && expense>budget)
+messages.push("🚨 Budget exceeded!");
+
+return messages;
+
+}
+
+// ===============================
+// INTELLIGENCE DASHBOARD
+// ===============================
+
+function updateIntelligence(income,expense){
+
+let health=calculateFinancialHealth(income,expense,budget);
+
+document.getElementById("healthScore").innerText=health;
+
+let alerts=document.getElementById("alertsList");
+
+if(!alerts) return;
+
+alerts.innerHTML="";
+
+let pattern=analyzeSpendingPattern();
+
+alerts.innerHTML+=
+`<li>📊 Highest spending category: ${pattern}</li>`;
+
+let prediction=predictNextExpense();
+
+if(prediction>0){
+
+alerts.innerHTML+=
+`<li>🔮 Predicted next expense: ₱${prediction}</li>`;
+
+}
+
+let advice=generateAdvice(income,expense,budget);
+
+advice.forEach(msg=>{
+alerts.innerHTML+=`<li>${msg}</li>`;
+});
+
+}
+
+// ===============================
+// STAR BACKGROUND
 // ===============================
 
 function startStarBackground(){
 
-    const starCanvas = document.getElementById("stars");
-    if(!starCanvas) return;
+const canvas=document.getElementById("stars");
 
-    const ctx = starCanvas.getContext("2d");
+if(!canvas) return;
 
-    let stars=[];
-    const STAR_COUNT=60;
+const ctx=canvas.getContext("2d");
 
-    function resizeCanvas(){
-        starCanvas.width=window.innerWidth;
-        starCanvas.height=window.innerHeight;
-    }
+let stars=[];
+const STAR_COUNT=60;
 
-    resizeCanvas();
-    window.addEventListener("resize",resizeCanvas);
+function resize(){
 
-    function createStars(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
 
-        stars=[];
+}
 
-        for(let i=0;i<STAR_COUNT;i++){
+resize();
 
-            stars.push({
-                x:Math.random()*starCanvas.width,
-                y:Math.random()*starCanvas.height,
-                radius:Math.random()*1.5,
-                speed:Math.random()*0.3+0.1
-            });
+window.addEventListener("resize",resize);
 
-        }
-    }
+for(let i=0;i<STAR_COUNT;i++){
 
-    createStars();
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+radius:Math.random()*1.5,
+speed:Math.random()*0.3+0.1
+});
 
-    function animate(){
+}
 
-        ctx.clearRect(0,0,starCanvas.width,starCanvas.height);
+function animate(){
 
-        stars.forEach(star=>{
+ctx.clearRect(0,0,canvas.width,canvas.height);
 
-            star.y+=star.speed;
+stars.forEach(star=>{
 
-            if(star.y>starCanvas.height){
-                star.y=0;
-                star.x=Math.random()*starCanvas.width;
-            }
+star.y+=star.speed;
 
-            ctx.beginPath();
-            ctx.arc(star.x,star.y,star.radius,0,Math.PI*2);
-            ctx.fillStyle="white";
-            ctx.fill();
+if(star.y>canvas.height){
 
-        });
+star.y=0;
+star.x=Math.random()*canvas.width;
 
-        requestAnimationFrame(animate);
-    }
+}
 
-    animate();
+ctx.beginPath();
+ctx.arc(star.x,star.y,star.radius,0,Math.PI*2);
+ctx.fillStyle="white";
+ctx.fill();
+
+});
+
+requestAnimationFrame(animate);
+
+}
+
+animate();
+
 }

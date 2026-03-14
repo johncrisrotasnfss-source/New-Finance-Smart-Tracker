@@ -1,164 +1,157 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Family Smart Finance System</title>
 
 <link rel="stylesheet" href="style.css">
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </head>
 
 <body>
 
-<!-- Background Canvas -->
 <canvas id="stars"></canvas>
 
-<header>
-<h1>🌌 Family Smart Finance System</h1>
-<p class="subtitle">
-A flexible budgeting platform for students, parents, and anyone who wants smarter financial control.
-</p>
-</header>
+<header class="topbar">
 
-<!-- Navigation -->
-<nav class="folder-nav">
-<button onclick="openFolder('dashboard')">Dashboard</button>
-<button onclick="openFolder('transactions')">Transactions</button>
-<button onclick="openFolder('budget')">Budget</button>
-<button onclick="openFolder('about')">About</button>
-<button onclick="openFolder('contact')">Contact</button>
+<div class="logo">🌌 Smart Finance</div>
+
+<nav>
+<a href="#">Home</a>
+<a href="#">Dashboard</a>
+<a href="#">Goals</a>
+<a href="#">Settings</a>
 </nav>
 
-<main>
+<button class="login-btn">Login</button>
 
-<!-- ================= DASHBOARD ================= -->
-<section id="dashboard" class="folder active">
+</header>
 
-<div class="card">
+
+<h2 class="section-title">Choose Your Financial Strategy</h2>
+
+<div class="strategy-grid">
+
+<div class="strategy-card" onclick="setStrategy('50-30-20')">
+<h3>50/30/20 Rule</h3>
+<p>Balance needs, wants and savings.</p>
+</div>
+
+<div class="strategy-card" onclick="setStrategy('student')">
+<h3>Student Mode</h3>
+<p>Optimized for allowance budgeting.</p>
+</div>
+
+<div class="strategy-card" onclick="setStrategy('aggressive')">
+<h3>Aggressive Saving</h3>
+<p>Maximize savings growth.</p>
+</div>
+
+<div class="strategy-card" onclick="setStrategy('debt')">
+<h3>Debt Focus</h3>
+<p>Pay debts faster.</p>
+</div>
+
+</div>
+
+
+<!-- FINANCIAL SUMMARY -->
+
+<div class="summary-grid">
+
+<div class="summary-card">
 <h3>Total Income</h3>
 <p>₱ <span id="income">0</span></p>
 </div>
 
-<div class="card">
+<div class="summary-card">
 <h3>Total Expenses</h3>
 <p>₱ <span id="expense">0</span></p>
 </div>
 
-<div class="card">
+<div class="summary-card">
 <h3>Balance</h3>
 <p>₱ <span id="balance">0</span></p>
 </div>
 
-<div class="card">
-<h3>AI Insight</h3>
-<div id="aiAnalysis"></div>
+<div class="summary-card health">
+<h3>Financial Health</h3>
+<p><span id="healthScore">85</span>/100</p>
 </div>
 
-<div class="card">
-<h3>Expense by Category</h3>
-<div class="chart-container">
+</div>
+
+
+<!-- BUDGET CONTROLLER -->
+
+<div class="budget-container">
+
+<div class="budget-left">
+
+<h3>Budget Allocation</h3>
+
+<label>Needs</label>
+<input type="range" id="needsSlider" min="0" max="100" value="50">
+
+<label>Wants</label>
+<input type="range" id="wantsSlider" min="0" max="100" value="30">
+
+<label>Savings</label>
+<input type="range" id="savingsSlider" min="0" max="100" value="20">
+
+<input type="number" id="incomeInput" placeholder="Monthly Income">
+
+<button onclick="calculateBudget()">Calculate</button>
+
+</div>
+
+
+<div class="budget-right">
+
+<h3>Budget Breakdown</h3>
+
+<div class="chart-box">
 <canvas id="financeChart"></canvas>
 </div>
-</div>
 
-</section>
-
-<!-- ================= TRANSACTIONS ================= -->
-<section id="transactions" class="folder">
-
-<div class="card">
-
-<h3>Add Transaction</h3>
-
-<input type="number" id="amount" placeholder="Enter Amount" required>
-
-<select id="type">
-<option value="income">Income</option>
-<option value="expense">Expense</option>
-</select>
-
-<select id="category">
-<option value="allowance">Allowance</option>
-<option value="salary">Salary</option>
-<option value="scholarship">Scholarship</option>
-<option value="food">Food</option>
-<option value="transport">Transport</option>
-<option value="school">School Supplies</option>
-<option value="tuition">Tuition</option>
-<option value="rent">Rent</option>
-<option value="internet">Internet</option>
-<option value="utilities">Utilities</option>
-<option value="entertainment">Entertainment</option>
-</select>
-
-<div class="button-group">
-<button onclick="addTransaction()">Add</button>
-<button onclick="resetAll()">Reset</button>
 </div>
 
 </div>
 
-</section>
 
-<!-- ================= BUDGET ================= -->
-<section id="budget" class="folder">
+<!-- GOALS + ALERTS -->
 
-<div class="card">
+<div class="bottom-grid">
 
-<h3>Monthly Budget</h3>
+<div class="goal-card">
 
-<input type="number" id="budgetInput" placeholder="Enter Monthly Budget">
+<h3>Monthly Savings Goal</h3>
 
-<button onclick="setBudget()">Save Budget</button>
+<div class="goal-bar">
+<div class="goal-progress" id="goalProgress"></div>
+</div>
 
-<p>Budget: ₱ <span id="budgetDisplay">0</span></p>
-<p>Remaining: ₱ <span id="budgetRemaining">0</span></p>
+<p>Target: ₱10,000</p>
 
 </div>
 
-</section>
 
-<!-- ================= ABOUT ================= -->
-<section id="about" class="folder">
+<div class="alert-card">
 
-<div class="card">
-<h3>About Us</h3>
+<h3>Smart Alerts</h3>
 
-<p>
-Family Smart Finance System is designed for students and families to manage financial transactions easily and intelligently.
-</p>
+<ul id="alertsList">
 
-<ul>
-<li>John Cris Hernan Rota</li>
-<li>Rhianne Denise Caringal</li>
-<li>Bianca Elise Betonio</li>
-<li>Joceff Ebrahim Caponpon</li>
+<li>⚠ Spending approaching budget limit</li>
+<li>⚡ Food expenses increasing</li>
+
 </ul>
 
 </div>
 
-</section>
-
-<!-- ================= CONTACT ================= -->
-<section id="contact" class="folder">
-
-<div class="card">
-<h3>Contact</h3>
-<p>Email: johncrishernan.snfss@email.com</p>
 </div>
 
-</section>
-
-</main>
-
-<!-- Scripts -->
 <script src="app.js"></script>
-<script src="ai-insight.js"></script>
 
 </body>
 </html>
