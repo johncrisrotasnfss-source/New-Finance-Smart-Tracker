@@ -18,20 +18,13 @@
 
 <canvas id="stars"></canvas>
 
-<header>
+<div class="dashboard">
 
-<h1>🌌 Family Smart Finance System</h1>
+<!-- SIDEBAR -->
 
-<p class="subtitle">
-A flexible budgeting platform for students, parents, and anyone who wants smarter financial control.
-</p>
+<aside class="sidebar">
 
-</header>
-
-
-<!-- NAVIGATION -->
-
-<nav class="folder-nav">
+<h2 class="logo">🌌 Smart Finance</h2>
 
 <button onclick="openFolder('dashboard')">Dashboard</button>
 <button onclick="openFolder('transactions')">Transactions</button>
@@ -39,32 +32,47 @@ A flexible budgeting platform for students, parents, and anyone who wants smarte
 <button onclick="openFolder('about')">About</button>
 <button onclick="openFolder('contact')">Contact</button>
 
-</nav>
+</aside>
 
 
+<!-- MAIN AREA -->
 
-<main>
+<main class="main">
+
+<header class="topbar">
+
+<h1>Financial Dashboard</h1>
+<p>Manage your income, expenses and budgets.</p>
+
+</header>
+
 
 
 <!-- DASHBOARD -->
 
 <section id="dashboard" class="folder active">
 
-<div class="grid">
+<div class="stats">
 
 <div class="card">
+
 <h3>Total Income</h3>
 <p class="money">₱ <span id="income">0</span></p>
+
 </div>
 
 <div class="card">
+
 <h3>Total Expenses</h3>
 <p class="money">₱ <span id="expense">0</span></p>
+
 </div>
 
 <div class="card">
+
 <h3>Balance</h3>
 <p class="money">₱ <span id="balance">0</span></p>
+
 </div>
 
 </div>
@@ -88,20 +96,17 @@ A flexible budgeting platform for students, parents, and anyone who wants smarte
 
 <section id="transactions" class="folder">
 
-<div class="card form-card">
+<div class="card">
 
 <h3>Add Transaction</h3>
 
-<label>Amount</label>
-<input type="number" id="amount" placeholder="Enter amount">
+<input type="number" id="amount" placeholder="Amount">
 
-<label>Type</label>
 <select id="type">
 <option value="income">Income</option>
 <option value="expense">Expense</option>
 </select>
 
-<label>Category</label>
 <select id="category">
 
 <option value="allowance">Allowance</option>
@@ -120,7 +125,7 @@ A flexible budgeting platform for students, parents, and anyone who wants smarte
 
 <div class="button-row">
 
-<button onclick="addTransaction()">Add Transaction</button>
+<button onclick="addTransaction()">Add</button>
 <button onclick="resetAll()" class="danger">Reset</button>
 
 </div>
@@ -135,20 +140,16 @@ A flexible budgeting platform for students, parents, and anyone who wants smarte
 
 <section id="budget" class="folder">
 
-<div class="card form-card">
+<div class="card">
 
 <h3>Monthly Budget</h3>
 
-<input type="number" id="budgetInput" placeholder="Enter monthly budget">
+<input type="number" id="budgetInput" placeholder="Enter Budget">
 
 <button onclick="setBudget()">Save Budget</button>
 
-<div class="budget-info">
-
 <p>Budget: ₱ <span id="budgetDisplay">0</span></p>
 <p>Remaining: ₱ <span id="budgetRemaining">0</span></p>
-
-</div>
 
 </div>
 
@@ -166,10 +167,10 @@ A flexible budgeting platform for students, parents, and anyone who wants smarte
 
 <p>
 Family Smart Finance System helps students and families
-track income, expenses, and budgets in a simple way.
+track income and expenses efficiently.
 </p>
 
-<ul class="team">
+<ul>
 
 <li>John Cris Hernan Rota</li>
 <li>Rhianne Denise Caringal</li>
@@ -200,6 +201,8 @@ track income, expenses, and budgets in a simple way.
 
 
 </main>
+
+</div>
 
 <script src="app.js"></script>
 
