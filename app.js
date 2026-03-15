@@ -142,6 +142,16 @@ function updateUI(){
 
 }
 
+renderTransactionTable();
+
+renderCategoryChart();
+
+calculateHealth(income,expense);
+
+updateBudgetBar(expense);
+
+generateInsights(income,expense);
+
 
 // ======================================
 // BUDGET SYSTEM
@@ -227,6 +237,52 @@ function updateChart(income,expense){
 
 }
 
+let categoryChart;
+
+function renderCategoryChart(){
+
+let categories={};
+
+transactions.forEach(t=>{
+
+if(t.type==="expense"){
+
+categories[t.category]=(categories[t.category]||0)+t.amount;
+
+}
+
+});
+
+const labels=Object.keys(categories);
+const data=Object.values(categories);
+
+const ctx=document.getElementById("categoryChart");
+
+if(!ctx) return;
+
+if(categoryChart){
+categoryChart.destroy();
+}
+
+categoryChart=new Chart(ctx,{
+
+type:"pie",
+
+data:{
+labels:labels,
+datasets:[{
+data:data
+}]
+},
+
+options:{
+responsive:true
+}
+
+});
+
+}
+
 
 // ======================================
 // STAR BACKGROUND SYSTEM
@@ -305,5 +361,78 @@ function startStarBackground(){
     }
 
     animate();
+
+}
+
+function renderTransactionTable(){
+
+const table=document.getElementById("transactionTable");
+
+table.innerHTML="";
+
+transactions.slice(-5).reverse().forEach(t=>{
+
+table.innerHTML+=`
+<tr>
+<td>${t.type}</td>
+<td>${t.category}</td>
+<td>₱${t.amount}</td>
+</tr>
+`;
+
+});
+
+}
+
+function calculateHealth(income,expense){
+
+if(income===0) return 0;
+
+let ratio=expense/income;
+
+let score=Math.round((1-ratio)*100);
+
+score=Math.max(0,Math.min(score,100));
+
+document.getElementById("healthScore").innerText=score;
+
+}
+
+function updateBudgetBar(expense){
+
+if(budget===0) return;
+
+let percent=(expense/budget)*100;
+
+percent=Math.min(percent,100);
+
+document.getElementById("budgetFill").style.width=percent+"%";
+
+}
+
+function generateInsights(income,expense){
+
+const insights=document.getElementById("insightsList");
+
+insights.innerHTML="";
+
+if(income===0){
+insights.innerHTML+="<li>Add income to start analysis.</li>";
+return;
+}
+
+let ratio=expense/income;
+
+if(ratio>0.8){
+insights.innerHTML+="<li>⚠ Spending is very high.</li>";
+}
+
+if(ratio<0.5){
+insights.innerHTML+="<li>✅ Great savings behavior.</li>";
+}
+
+if(expense>budget && budget>0){
+insights.innerHTML+="<li>🚨 Budget exceeded.</li>";
+}
 
 }

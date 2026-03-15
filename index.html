@@ -49,36 +49,36 @@
 
 
 <!-- DASHBOARD -->
-
 <section id="dashboard" class="folder active">
 
 <div class="stats">
 
 <div class="card">
-
 <h3>Total Income</h3>
 <p class="money">₱ <span id="income">0</span></p>
-
 </div>
 
 <div class="card">
-
 <h3>Total Expenses</h3>
 <p class="money">₱ <span id="expense">0</span></p>
-
 </div>
 
 <div class="card">
-
 <h3>Balance</h3>
 <p class="money">₱ <span id="balance">0</span></p>
+</div>
 
+<div class="card">
+<h3>Financial Health</h3>
+<p class="health-score"><span id="healthScore">0</span>%</p>
 </div>
 
 </div>
 
 
-<div class="card chart-card">
+<div class="dashboard-grid">
+
+<div class="card">
 
 <h3>Finance Overview</h3>
 
@@ -88,8 +88,69 @@
 
 </div>
 
-</section>
 
+<div class="card">
+
+<h3>Spending by Category</h3>
+
+<div class="chart-container">
+<canvas id="categoryChart"></canvas>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="dashboard-grid">
+
+<div class="card">
+
+<h3>Recent Transactions</h3>
+
+<table class="transaction-table">
+
+<thead>
+<tr>
+<th>Type</th>
+<th>Category</th>
+<th>Amount</th>
+</tr>
+</thead>
+
+<tbody id="transactionTable"></tbody>
+
+</table>
+
+</div>
+
+
+<div class="card">
+
+<h3>Smart Insights</h3>
+
+<ul id="insightsList"></ul>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Budget Progress</h3>
+
+<div class="budget-bar">
+
+<div id="budgetFill"></div>
+
+</div>
+
+<p>Remaining Budget: ₱ <span id="budgetRemaining">0</span></p>
+
+</div>
+
+</section>
 
 
 <!-- TRANSACTIONS -->
